@@ -1,1 +1,1 @@
-# JournalKit
+# JournalKitGitHubED
