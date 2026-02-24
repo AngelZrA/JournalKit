@@ -1,0 +1,456 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2867
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 <!DOCTYPE html>\
+<html lang="es">\
+<head>\
+  <meta charset="UTF-8">\
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">\
+  <title>Kitchen Journal - Dashboard</title>\
+  \
+  <!-- Carga de Tailwind CSS -->\
+  <script src="https://cdn.tailwindcss.com"></script>\
+  \
+  <!-- Carga de React y ReactDOM -->\
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>\
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>\
+  \
+  <!-- Carga de Babel para compilar JSX en el navegador -->\
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>\
+\
+  <style>\
+    /* Estilos base para evitar saltos en la carga */\
+    body \{ background-color: #f8fafc; font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; \}\
+    #root \{ min-height: 100vh; \}\
+  </style>\
+</head>\
+<body>\
+  <div id="root"></div>\
+\
+  <!-- C\'f3digo de la Aplicaci\'f3n en React -->\
+  <script type="text/babel">\
+    const \{ useState, useEffect, useMemo \} = React;\
+\
+    // --- SISTEMA DE ICONOS SVG NATIVOS ---\
+    const Icon = (\{ path, className = "w-6 h-6", fill = "none" \}) => (\
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill=\{fill\} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=\{className\} dangerouslySetInnerHTML=\{\{ __html: path \}\} />\
+    );\
+\
+    const ChefHat = (p) => <Icon \{...p\} path='<path d="M17 21v-4a2 2 0 0 0-2-2h-6a2 2 0 0 0-2 2v4"/><path d="M5 15a2 2 0 0 1-2-2 2 2 0 0 1 2-2 1.5 1.5 0 0 1 1.5-1.5 2.5 2.5 0 0 1 5 0 2.5 2.5 0 0 1 5 0 1.5 1.5 0 0 1 1.5 1.5 2 2 0 0 1 2 2 2 2 0 0 1-2 2"/>' />;\
+    const Utensils = (p) => <Icon \{...p\} path='<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/>' />;\
+    const CheckCircle = (p) => <Icon \{...p\} path='<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>' />;\
+    const AlertTriangle = (p) => <Icon \{...p\} path='<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>' />;\
+    const Clock = (p) => <Icon \{...p\} path='<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>' />;\
+    const LogOut = (p) => <Icon \{...p\} path='<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>' />;\
+    const Plus = (p) => <Icon \{...p\} path='<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>' />;\
+    const BarChart2 = (p) => <Icon \{...p\} path='<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>' />;\
+    const BookOpen = (p) => <Icon \{...p\} path='<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>' />;\
+    const Edit2 = (p) => <Icon \{...p\} path='<path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>' />;\
+    const Save = (p) => <Icon \{...p\} path='<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>' />;\
+    const UserIcon = (p) => <Icon \{...p\} path='<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>' />;\
+    const XCircle = (p) => <Icon \{...p\} path='<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>' />;\
+    const Book = (p) => <Icon \{...p\} path='<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>' />;\
+    const MessageSquare = (p) => <Icon \{...p\} path='<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>' />;\
+    const AlertOctagon = (p) => <Icon \{...p\} path='<polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>' />;\
+    const Star = (p) => <Icon \{...p\} path='<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>' />;\
+    const ChevronDown = (p) => <Icon \{...p\} path='<polyline points="6 9 12 15 18 9"/>' />;\
+    const ChevronUp = (p) => <Icon \{...p\} path='<polyline points="18 15 12 9 6 15"/>' />;\
+    const FileText = (p) => <Icon \{...p\} path='<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>' />;\
+    const Send = (p) => <Icon \{...p\} path='<line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>' />;\
+\
+    // --- DATOS POR DEFECTO ---\
+    const DEFAULT_TASKS = [\
+      \{ id: 1, title: 'Cortar 5kg de cebolla juliana', description: 'Para la sopa de cebolla del men\'fa especial de la noche.', priority: true, completedBy: 'Jose Miguel', notes: 'Llor\'e9 mucho, pero quedaron perfectas. Guardadas en c\'e1mara 1.', createdAt: new Date().toISOString() \},\
+      \{ id: 2, title: 'Preparar base de salsa holandesa', description: 'Necesitamos 2 litros para los huevos benedictinos del brunch.', priority: true, completedBy: null, notes: '', createdAt: new Date().toISOString() \},\
+      \{ id: 3, title: 'Limpiar filtros de los extractores', description: 'Mantenimiento semanal de la zona de planchas.', priority: false, completedBy: null, notes: '', createdAt: new Date().toISOString() \}\
+    ];\
+\
+    const DEFAULT_RECIPES = [\
+      \{ id: 1, title: 'Salsa Holandesa Base', ingredients: '5 Yemas de huevo\\n250g Mantequilla clarificada\\nZumo de 1/2 lim\'f3n\\nSal y Pimienta blanca al gusto', instructions: '1. Emulsionar las yemas al ba\'f1o mar\'eda a fuego muy suave hasta que espumen y monten un poco.\\n2. A\'f1adir la mantequilla clarificada a hilo fino sin dejar de batir en\'e9rgicamente.\\n3. Sazonar con sal, pimienta y el zumo de lim\'f3n.', author: 'Jefe de Cocina', comments: [\{ id: 1, user: 'Jose Miguel', text: 'Si infusionamos la mantequilla con estrag\'f3n antes, queda perfecta para pescados.', date: new Date().toISOString() \}] \}\
+    ];\
+\
+    const DEFAULT_INCIDENTS = [\
+      \{ id: 1, title: 'Fuga en el lavavajillas principal', description: 'Pierde un poco de agua por la puerta al terminar el ciclo corto de lavado. Hay que fregar despu\'e9s de usarlo.', priority: true, reportedBy: 'Jose Miguel', status: 'pending', createdAt: new Date().toISOString() \}\
+    ];\
+\
+    // --- COMPONENTE APP PRINCIPAL ---\
+    function App() \{\
+      const [user, setUser] = useState(() => \{ try \{ const saved = localStorage.getItem('kitchen_user'); return saved ? JSON.parse(saved) : null; \} catch \{ return null; \} \});\
+      const [tasks, setTasks] = useState(() => \{ try \{ const saved = localStorage.getItem('kitchen_tasks'); return saved ? JSON.parse(saved) : DEFAULT_TASKS; \} catch \{ return DEFAULT_TASKS; \} \});\
+      const [recipes, setRecipes] = useState(() => \{ try \{ const saved = localStorage.getItem('kitchen_recipes'); return saved ? JSON.parse(saved) : DEFAULT_RECIPES; \} catch \{ return DEFAULT_RECIPES; \} \});\
+      const [incidents, setIncidents] = useState(() => \{ try \{ const saved = localStorage.getItem('kitchen_incidents'); return saved ? JSON.parse(saved) : DEFAULT_INCIDENTS; \} catch \{ return DEFAULT_INCIDENTS; \} \});\
+      const [evaluations, setEvaluations] = useState(() => \{ try \{ const saved = localStorage.getItem('kitchen_evaluations'); return saved ? JSON.parse(saved) : \{\}; \} catch \{ return \{\}; \} \});\
+\
+      useEffect(() => \{ if (user) localStorage.setItem('kitchen_user', JSON.stringify(user)); else localStorage.removeItem('kitchen_user'); \}, [user]);\
+      useEffect(() => \{ localStorage.setItem('kitchen_tasks', JSON.stringify(tasks)); \}, [tasks]);\
+      useEffect(() => \{ localStorage.setItem('kitchen_recipes', JSON.stringify(recipes)); \}, [recipes]);\
+      useEffect(() => \{ localStorage.setItem('kitchen_incidents', JSON.stringify(incidents)); \}, [incidents]);\
+      useEffect(() => \{ localStorage.setItem('kitchen_evaluations', JSON.stringify(evaluations)); \}, [evaluations]);\
+\
+      if (!user) return <Login onLogin=\{setUser\} />;\
+\
+      return <Dashboard \
+        user=\{user\} onLogout=\{() => setUser(null)\} \
+        tasks=\{tasks\} setTasks=\{setTasks\} \
+        recipes=\{recipes\} setRecipes=\{setRecipes\}\
+        incidents=\{incidents\} setIncidents=\{setIncidents\}\
+        evaluations=\{evaluations\} setEvaluations=\{setEvaluations\}\
+      />;\
+    \}\
+\
+    // --- COMPONENTE LOGIN ---\
+    function Login(\{ onLogin \}) \{\
+      const [username, setUsername] = useState('');\
+      const [password, setPassword] = useState('');\
+      const [error, setError] = useState('');\
+\
+      const handleLogin = (e) => \{\
+        e.preventDefault();\
+        setError('');\
+        const trimmedName = username.trim();\
+        if (!trimmedName) \{ setError('Por favor, introduce tu nombre.'); return; \}\
+        if (trimmedName.toLowerCase() === 'jefecocina') \{\
+          if (password === '1234') onLogin(\{ name: 'Jefe de Cocina', role: 'chef' \});\
+          else setError('Contrase\'f1a de Jefe de Cocina incorrecta.');\
+        \} else \{\
+          onLogin(\{ name: trimmedName, role: 'worker' \});\
+        \}\
+      \};\
+\
+      const isChef = username.trim().toLowerCase() === 'jefecocina';\
+\
+      return (\
+        <div className="min-h-screen bg-slate-100 flex items-center justify-center p-4">\
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden border border-slate-200">\
+            <div className="bg-teal-700 p-6 text-center text-white">\
+              <ChefHat className="w-16 h-16 mx-auto mb-2 opacity-90" />\
+              <h1 className="text-2xl font-bold tracking-wide">Kitchen Journal</h1>\
+              <p className="opacity-80 font-light text-teal-100">Gesti\'f3n de Cocina y Tareas</p>\
+            </div>\
+            <form onSubmit=\{handleLogin\} className="p-6 space-y-4">\
+              \{error && <div className="bg-rose-50 text-rose-700 p-3 rounded-lg text-sm text-center border border-rose-200">\{error\}</div>\}\
+              <div>\
+                <label className="block text-sm font-medium text-slate-700 mb-1">Usuario / Nombre</label>\
+                <input type="text" className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-teal-600 outline-none transition-colors" placeholder="Ej: Jose Miguel o JefeCocina" value=\{username\} onChange=\{(e) => setUsername(e.target.value)\} />\
+              </div>\
+              \{isChef && (\
+                <div className="animate-in fade-in slide-in-from-top-2">\
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Contrase\'f1a</label>\
+                  <input type="password" className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-teal-600 outline-none transition-colors" placeholder="****" value=\{password\} onChange=\{(e) => setPassword(e.target.value)\} />\
+                </div>\
+              )\}\
+              <button type="submit" className="w-full bg-teal-700 hover:bg-teal-800 text-white font-medium py-3 rounded-lg transition-colors flex justify-center items-center gap-2 mt-6 shadow-sm">\
+                <Utensils className="w-5 h-5 opacity-90" /> Entrar a la Cocina\
+              </button>\
+            </form>\
+          </div>\
+        </div>\
+      );\
+    \}\
+\
+    // --- DASHBOARD PRINCIPAL ---\
+    function Dashboard(\{ user, onLogout, tasks, setTasks, recipes, setRecipes, incidents, setIncidents, evaluations, setEvaluations \}) \{\
+      const [activeTab, setActiveTab] = useState('tasks');\
+\
+      return (\
+        <div className="min-h-screen bg-slate-50 font-sans text-slate-800 pb-10">\
+          <nav className="bg-slate-800 text-white shadow-md sticky top-0 z-50">\
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">\
+              <div className="flex justify-between h-16 items-center">\
+                <div className="flex items-center gap-2">\
+                  <ChefHat className="text-teal-400 w-8 h-8" />\
+                  <span className="font-semibold text-xl hidden sm:block tracking-wide text-slate-100">Kitchen Journal</span>\
+                </div>\
+                <div className="flex items-center gap-6">\
+                  <div className="hidden md:flex gap-2 bg-slate-700/50 p-1 rounded-lg">\
+                    <button onClick=\{() => setActiveTab('tasks')\} className=\{`px-4 py-1.5 rounded-md text-sm font-medium transition-colors $\{activeTab === 'tasks' ? 'bg-teal-700 text-white shadow-sm' : 'text-slate-300 hover:text-white'\}`\}>Tablero</button>\
+                    <button onClick=\{() => setActiveTab('recipes')\} className=\{`px-4 py-1.5 rounded-md text-sm font-medium transition-colors $\{activeTab === 'recipes' ? 'bg-teal-700 text-white shadow-sm' : 'text-slate-300 hover:text-white'\}`\}>Recetario</button>\
+                    <button onClick=\{() => setActiveTab('incidents')\} className=\{`px-4 py-1.5 rounded-md text-sm font-medium transition-colors $\{activeTab === 'incidents' ? 'bg-teal-700 text-white shadow-sm' : 'text-slate-300 hover:text-white'\}`\}>Incidencias</button>\
+                    \{user.role === 'chef' && <button onClick=\{() => setActiveTab('performance')\} className=\{`px-4 py-1.5 rounded-md text-sm font-medium transition-colors $\{activeTab === 'performance' ? 'bg-teal-700 text-white shadow-sm' : 'text-slate-300 hover:text-white'\}`\}>Rendimiento</button>\}\
+                  </div>\
+                  <div className="flex items-center gap-3">\
+                    <div className="text-right hidden sm:block">\
+                      <div className="text-sm font-medium text-slate-100">\{user.name\}</div>\
+                      <div className="text-xs text-teal-300/80 capitalize">\{user.role === 'chef' ? 'Jefe de Cocina' : 'Cocinero/a'\}</div>\
+                    </div>\
+                    <div className="w-10 h-10 bg-slate-700 border border-slate-600 rounded-full flex items-center justify-center text-teal-400 shadow-inner">\
+                      <UserIcon className="w-5 h-5" />\
+                    </div>\
+                    <button onClick=\{onLogout\} className="p-2 text-slate-400 hover:text-rose-400 hover:bg-slate-700 rounded-full transition-colors" title="Cerrar Sesi\'f3n">\
+                      <LogOut className="w-5 h-5" />\
+                    </button>\
+                  </div>\
+                </div>\
+              </div>\
+            </div>\
+          </nav>\
+\
+          <div className="md:hidden flex flex-wrap bg-slate-700 p-2 shadow-inner gap-1">\
+            <button onClick=\{() => setActiveTab('tasks')\} className=\{`flex-1 min-w-[70px] py-2 text-xs font-medium text-center rounded-lg transition-colors $\{activeTab === 'tasks' ? 'bg-teal-700 text-white shadow-sm' : 'text-slate-300'\}`\}>Tablero</button>\
+            <button onClick=\{() => setActiveTab('recipes')\} className=\{`flex-1 min-w-[70px] py-2 text-xs font-medium text-center rounded-lg transition-colors $\{activeTab === 'recipes' ? 'bg-teal-700 text-white shadow-sm' : 'text-slate-300'\}`\}>Recetas</button>\
+            <button onClick=\{() => setActiveTab('incidents')\} className=\{`flex-1 min-w-[70px] py-2 text-xs font-medium text-center rounded-lg transition-colors $\{activeTab === 'incidents' ? 'bg-teal-700 text-white shadow-sm' : 'text-slate-300'\}`\}>Incidencias</button>\
+            \{user.role === 'chef' && <button onClick=\{() => setActiveTab('performance')\} className=\{`flex-1 min-w-[70px] py-2 text-xs font-medium text-center rounded-lg transition-colors $\{activeTab === 'performance' ? 'bg-teal-700 text-white shadow-sm' : 'text-slate-300'\}`\}>Rendimiento</button>\}\
+          </div>\
+\
+          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">\
+            \{activeTab === 'tasks' && <TaskBoard user=\{user\} tasks=\{tasks\} setTasks=\{setTasks\} />\}\
+            \{activeTab === 'performance' && <PerformanceBoard tasks=\{tasks\} evaluations=\{evaluations\} setEvaluations=\{setEvaluations\} />\}\
+            \{activeTab === 'recipes' && <RecipeBoard user=\{user\} recipes=\{recipes\} setRecipes=\{setRecipes\} />\}\
+            \{activeTab === 'incidents' && <IncidentBoard user=\{user\} incidents=\{incidents\} setIncidents=\{setIncidents\} />\}\
+          </main>\
+        </div>\
+      );\
+    \}\
+\
+    // --- TABLERO DE TAREAS ---\
+    function TaskBoard(\{ user, tasks, setTasks \}) \{\
+      const [showNewTaskForm, setShowNewTaskForm] = useState(false);\
+      const [filter, setFilter] = useState('all');\
+\
+      const sortedTasks = useMemo(() => [...tasks].sort((a, b) => \{\
+        if (!a.completedBy && b.completedBy) return -1;\
+        if (a.completedBy && !b.completedBy) return 1;\
+        if (!a.completedBy && !b.completedBy) \{\
+          if (a.priority && !b.priority) return -1;\
+          if (!a.priority && b.priority) return 1;\
+        \}\
+        return new Date(b.createdAt) - new Date(a.createdAt);\
+      \}), [tasks]);\
+\
+      const filteredTasks = useMemo(() => \{\
+        if (filter === 'pending') return sortedTasks.filter(t => !t.completedBy);\
+        if (filter === 'completed') return sortedTasks.filter(t => t.completedBy);\
+        return sortedTasks;\
+      \}, [sortedTasks, filter]);\
+\
+      return (\
+        <div className="space-y-6">\
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">\
+            <div>\
+              <h2 className="text-2xl font-semibold text-slate-800 tracking-tight">Orden de Trabajo</h2>\
+              <p className="text-slate-500 text-sm mt-1">Organizaci\'f3n y estado de la cocina</p>\
+            </div>\
+            <div className="flex flex-wrap items-center gap-3">\
+              <select className="bg-white border border-slate-300 text-slate-700 rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-teal-600 shadow-sm text-sm" value=\{filter\} onChange=\{(e) => setFilter(e.target.value)\}>\
+                <option value="all">Todas las tareas</option>\
+                <option value="pending">Pendientes</option>\
+                <option value="completed">Completadas</option>\
+              </select>\
+              \{user.role === 'chef' && (\
+                <button onClick=\{() => setShowNewTaskForm(!showNewTaskForm)\} className="bg-teal-700 hover:bg-teal-800 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm transition-colors flex items-center gap-2">\
+                  \{showNewTaskForm ? <XCircle className="w-4 h-4" /> : <Plus className="w-4 h-4" />\}\
+                  \{showNewTaskForm ? 'Cancelar' : 'Nueva Tarea'\}\
+                </button>\
+              )\}\
+            </div>\
+          </div>\
+\
+          \{showNewTaskForm && user.role === 'chef' && (\
+            <form onSubmit=\{(e) => \{\
+              e.preventDefault();\
+              const formData = new FormData(e.target);\
+              if(!formData.get('title').trim()) return;\
+              setTasks([\{ id: Date.now(), title: formData.get('title'), description: formData.get('desc'), priority: formData.get('priority') === 'on', completedBy: null, notes: '', createdAt: new Date().toISOString() \}, ...tasks]);\
+              setShowNewTaskForm(false);\
+            \}\} className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">\
+              <h3 className="text-lg font-semibold text-slate-800 mb-4 border-b border-slate-100 pb-3">Asignar Nueva Tarea</h3>\
+              <div className="space-y-4">\
+                <div><label className="block text-sm font-medium text-slate-700 mb-1.5">T\'edtulo</label><input name="title" required className="w-full px-4 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-600 outline-none" placeholder="Ej: Preparar mise en place" /></div>\
+                <div><label className="block text-sm font-medium text-slate-700 mb-1.5">Descripci\'f3n</label><textarea name="desc" className="w-full px-4 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-600 outline-none min-h-[80px]" placeholder="Detalles de c\'f3mo realizar la tarea..." /></div>\
+                <div className="flex items-center gap-3 bg-slate-50 p-3.5 rounded-lg border border-slate-200">\
+                  <input type="checkbox" name="priority" id="priority" className="w-4 h-4" />\
+                  <label htmlFor="priority" className="text-sm font-medium text-slate-700 flex items-center gap-2 cursor-pointer"><AlertTriangle className="w-4 h-4 text-rose-600" /> Marcar como Urgente</label>\
+                </div>\
+                <div className="flex justify-end"><button type="submit" className="bg-slate-800 hover:bg-slate-900 text-white px-6 py-2.5 rounded-lg text-sm font-medium">Asignar</button></div>\
+              </div>\
+            </form>\
+          )\}\
+\
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">\
+            \{filteredTasks.length === 0 ? (\
+              <div className="col-span-full py-16 text-center text-slate-400 bg-white rounded-xl border border-dashed border-slate-300 shadow-sm"><CheckCircle className="w-12 h-12 mx-auto mb-3 opacity-30 text-teal-700" /><p className="text-lg font-medium text-slate-600">No hay tareas en esta vista.</p></div>\
+            ) : (\
+              filteredTasks.map(task => <TaskCard key=\{task.id\} task=\{task\} user=\{user\} setTasks=\{setTasks\} />)\
+            )\}\
+          </div>\
+        </div>\
+      );\
+    \}\
+\
+    function TaskCard(\{ task, user, setTasks \}) \{\
+      const [isEditingNote, setIsEditingNote] = useState(false);\
+      const [noteText, setNoteText] = useState(task.notes);\
+      const [isEditingSignature, setIsEditingSignature] = useState(false);\
+      const [signatureText, setSignatureText] = useState(task.completedBy || '');\
+      const isCompleted = !!task.completedBy;\
+\
+      const handleComplete = () => setTasks(prev => prev.map(t => t.id === task.id ? \{ ...t, completedBy: user.name \} : t));\
+      const handleSaveNote = () => \{ setTasks(prev => prev.map(t => t.id === task.id ? \{ ...t, notes: noteText \} : t)); setIsEditingNote(false); \};\
+      const handleSaveSignature = () => \{ setTasks(prev => prev.map(t => t.id === task.id ? \{ ...t, completedBy: signatureText.trim() || null \} : t)); setIsEditingSignature(false); \};\
+      const handleDelete = () => setTasks(prev => prev.filter(t => t.id !== task.id));\
+\
+      return (\
+        <div className=\{`flex flex-col rounded-xl shadow-sm border overflow-hidden bg-white $\{isCompleted ? 'border-emerald-200/60 opacity-80' : task.priority ? 'border-rose-200 ring-1 ring-rose-200/50 scale-[1.01]' : 'border-amber-200 border-l-4 border-l-amber-300'\}`\}>\
+          <div className=\{`p-5 pb-4 border-b $\{isCompleted ? 'border-emerald-100 bg-emerald-50/30' : task.priority ? 'border-rose-100 bg-rose-50/30' : 'border-slate-100'\}`\}>\
+            <div className="flex justify-between items-start gap-3">\
+              <h3 className=\{`font-semibold text-base leading-snug $\{isCompleted ? 'text-slate-500 line-through' : 'text-slate-800'\}`\}>\{task.title\}</h3>\
+              \{!isCompleted && task.priority && <span className="flex items-center gap-1 text-[10px] font-bold text-rose-700 bg-rose-100 px-2 py-1 rounded-full uppercase"><AlertTriangle className="w-3 h-3" /> Urgente</span>\}\
+            </div>\
+            <p className="mt-2.5 text-sm leading-relaxed text-slate-600">\{task.description || 'Sin descripci\'f3n.'\}</p>\
+          </div>\
+          <div className="p-5 flex-grow flex flex-col justify-between space-y-5">\
+            <div className="bg-slate-50/50 p-3.5 rounded-lg border border-slate-100 text-sm">\
+              <div className="flex justify-between items-center mb-2.5">\
+                <span className="font-medium text-slate-600 flex items-center gap-1.5 text-xs uppercase tracking-wide"><BookOpen className="w-3.5 h-3.5" /> Observaciones</span>\
+                \{!isEditingNote && <button onClick=\{() => setIsEditingNote(true)\} className="text-teal-600 hover:text-teal-800 text-xs font-medium flex gap-1"><Edit2 className="w-3 h-3" /> Editar</button>\}\
+              </div>\
+              \{isEditingNote ? (\
+                <div className="space-y-2">\
+                  <textarea className="w-full p-2.5 border border-teal-200 rounded-md outline-none text-xs" rows="3" value=\{noteText\} onChange=\{e => setNoteText(e.target.value)\} />\
+                  <div className="flex justify-end gap-2"><button onClick=\{() => setIsEditingNote(false)\} className="text-xs">Cancelar</button><button onClick=\{handleSaveNote\} className="bg-teal-50 text-teal-700 px-3 py-1.5 rounded text-xs font-medium border border-teal-200">Guardar</button></div>\
+                </div>\
+              ) : <p className="text-slate-600 text-sm">\{task.notes || <span className="text-slate-400 italic text-xs">Sin observaciones.</span>\}</p>\}\
+            </div>\
+            <div className="mt-auto pt-2">\
+              \{isCompleted ? (\
+                <div className="bg-emerald-50/50 border border-emerald-200/80 rounded-lg p-3.5">\
+                  <div className="flex items-center gap-2 text-emerald-700 font-medium text-xs uppercase mb-2"><CheckCircle className="w-4 h-4" /> Completado por:</div>\
+                  \{isEditingSignature && user.role === 'chef' ? (\
+                    <div className="flex gap-2"><input type="text" className="flex-1 px-2 py-1 text-sm border border-emerald-300 rounded-md" value=\{signatureText\} onChange=\{e => setSignatureText(e.target.value)\} /><button onClick=\{handleSaveSignature\} className="bg-emerald-600 text-white p-1.5 rounded-md"><Save className="w-4 h-4"/></button></div>\
+                  ) : (\
+                    <div className="flex justify-between items-center bg-white p-2.5 rounded-md border border-emerald-100/50"><span className="font-semibold text-sm">\{task.completedBy\}</span>\{user.role === 'chef' && <button onClick=\{() => \{setSignatureText(task.completedBy); setIsEditingSignature(true);\}\}><Edit2 className="w-4 h-4 text-slate-400" /></button>\}</div>\
+                  )\}\
+                </div>\
+              ) : <button onClick=\{handleComplete\} className=\{`w-full py-2.5 rounded-lg text-sm font-medium flex justify-center gap-2 $\{task.priority ? 'bg-rose-700 text-white' : 'bg-slate-700 text-white'\}`\}><CheckCircle className="w-4 h-4" /> Firmar Completada</button>\}\
+              \{user.role === 'chef' && <div className="mt-4 text-center"><button onClick=\{handleDelete\} className="text-xs text-slate-400 hover:text-rose-600">Eliminar tarea</button></div>\}\
+            </div>\
+          </div>\
+        </div>\
+      );\
+    \}\
+\
+    // --- PANEL DE RENDIMIENTO ---\
+    function PerformanceBoard(\{ tasks, evaluations, setEvaluations \}) \{\
+      const stats = useMemo(() => \{\
+        const completed = tasks.filter(t => t.completedBy);\
+        const userMap = \{\};\
+        completed.forEach(t => \{\
+          if (!userMap[t.completedBy]) userMap[t.completedBy] = \{ count: 0, priorityCount: 0 \};\
+          userMap[t.completedBy].count += 1;\
+          if (t.priority) userMap[t.completedBy].priorityCount += 1;\
+        \});\
+        return \{ total: tasks.length, completed: completed.length, pending: tasks.length - completed.length, ranking: Object.entries(userMap).map(([name, d]) => (\{name, ...d\})).sort((a,b) => b.count - a.count) \};\
+      \}, [tasks]);\
+\
+      return (\
+        <div className="space-y-6">\
+          <h2 className="text-2xl font-semibold text-slate-800 flex gap-2"><BarChart2 className="w-6 h-6 text-teal-700" /> Rendimiento del Equipo</h2>\
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">\
+            <div className="bg-white p-6 rounded-xl border border-slate-200 flex gap-5"><div className="text-3xl font-bold">\{stats.total\}</div><div className="text-xs text-slate-500 uppercase">Total</div></div>\
+            <div className="bg-white p-6 rounded-xl border border-slate-200 flex gap-5"><div className="text-3xl font-bold">\{stats.completed\}</div><div className="text-xs text-slate-500 uppercase">Completadas</div></div>\
+            <div className="bg-white p-6 rounded-xl border border-slate-200 flex gap-5"><div className="text-3xl font-bold">\{stats.pending\}</div><div className="text-xs text-slate-500 uppercase">Pendientes</div></div>\
+          </div>\
+          <div className="bg-white rounded-xl border border-slate-200">\
+            <div className="bg-slate-50 p-5 border-b border-slate-100 font-semibold">Ranking y Evaluaci\'f3n</div>\
+            \{stats.ranking.map((u, i) => (\
+              <div key=\{u.name\} className="p-5 border-b border-slate-100 flex justify-between">\
+                <div className="flex gap-4">\
+                  <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center font-bold">\{i+1\}</div>\
+                  <div><h4 className="font-semibold">\{u.name\}</h4><span className="text-[10px] bg-rose-50 text-rose-600 px-2 rounded-full">\{u.priorityCount\} urgentes</span></div>\
+                </div>\
+                <div className="text-right text-2xl font-bold">\{u.count\}</div>\
+              </div>\
+            ))\}\
+          </div>\
+        </div>\
+      );\
+    \}\
+\
+    // --- RECETARIO ---\
+    function RecipeBoard(\{ user, recipes, setRecipes \}) \{\
+      const [showForm, setShowForm] = useState(false);\
+      return (\
+        <div className="space-y-6">\
+          <div className="flex justify-between">\
+            <h2 className="text-2xl font-semibold flex gap-2"><Book className="w-6 h-6 text-teal-700" /> Recetario Base</h2>\
+            \{user.role === 'chef' && <button onClick=\{() => setShowForm(!showForm)\} className="bg-teal-700 text-white px-4 py-2 rounded-lg text-sm flex gap-2"><Plus className="w-4 h-4"/> Nueva Receta</button>\}\
+          </div>\
+          \{showForm && user.role === 'chef' && (\
+            <form onSubmit=\{e => \{\
+              e.preventDefault();\
+              const fd = new FormData(e.target);\
+              setRecipes([\{id: Date.now(), title: fd.get('title'), ingredients: fd.get('ing'), instructions: fd.get('inst'), author: user.name, comments: []\}, ...recipes]);\
+              setShowForm(false);\
+            \}\} className="bg-white p-6 rounded-xl border border-slate-200 space-y-4">\
+              <input name="title" required className="w-full px-4 py-2 border rounded-lg" placeholder="T\'edtulo" />\
+              <textarea name="ing" className="w-full px-4 py-2 border rounded-lg min-h-[80px]" placeholder="Ingredientes" />\
+              <textarea name="inst" className="w-full px-4 py-2 border rounded-lg min-h-[80px]" placeholder="Instrucciones" />\
+              <button className="bg-slate-800 text-white px-6 py-2 rounded-lg">Guardar</button>\
+            </form>\
+          )\}\
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">\
+            \{recipes.map(r => (\
+              <div key=\{r.id\} className="bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col">\
+                <div className="p-5 bg-slate-50/50 border-b border-slate-100"><h3 className="font-bold text-lg">\{r.title\}</h3><p className="text-xs text-slate-500">Por \{r.author\}</p></div>\
+                <div className="p-5 grid grid-cols-2 gap-4 text-sm border-b border-slate-100"><div className="whitespace-pre-line text-slate-600 font-medium">Ingredientes:<br/>\{r.ingredients\}</div><div className="whitespace-pre-line text-slate-600 font-medium">Pasos:<br/>\{r.instructions\}</div></div>\
+                <div className="p-5 bg-slate-50 flex-grow">\
+                  <h4 className="text-xs uppercase font-semibold mb-3 flex gap-2"><MessageSquare className="w-4 h-4"/> Comentarios</h4>\
+                  \{r.comments.map(c => <div key=\{c.id\} className="bg-white p-3 rounded border mb-2"><div className="text-xs font-bold">\{c.user\}</div><div className="text-sm">\{c.text\}</div></div>)\}\
+                  <form onSubmit=\{e => \{\
+                    e.preventDefault(); const text = e.target.comment.value; if(!text) return;\
+                    setRecipes(prev => prev.map(rec => rec.id === r.id ? \{...rec, comments: [...rec.comments, \{id: Date.now(), user: user.name, text\}]\} : rec));\
+                    e.target.reset();\
+                  \}\} className="flex gap-2 mt-4"><input name="comment" className="flex-1 px-3 py-2 border rounded-lg text-sm" placeholder="A\'f1adir comentario..."/><button className="bg-teal-700 text-white p-2 rounded-lg"><Send className="w-4 h-4"/></button></form>\
+                </div>\
+              </div>\
+            ))\}\
+          </div>\
+        </div>\
+      );\
+    \}\
+\
+    // --- INCIDENCIAS ---\
+    function IncidentBoard(\{ user, incidents, setIncidents \}) \{\
+      const [showForm, setShowForm] = useState(false);\
+      return (\
+        <div className="space-y-6">\
+          <div className="flex justify-between">\
+            <h2 className="text-2xl font-semibold flex gap-2"><AlertOctagon className="w-6 h-6 text-rose-600" /> Incidencias</h2>\
+            <button onClick=\{() => setShowForm(!showForm)\} className="bg-slate-800 text-white px-4 py-2 rounded-lg text-sm flex gap-2"><Plus className="w-4 h-4"/> Reportar</button>\
+          </div>\
+          \{showForm && (\
+            <form onSubmit=\{e => \{\
+              e.preventDefault(); const fd = new FormData(e.target);\
+              setIncidents([\{id: Date.now(), title: fd.get('title'), description: fd.get('desc'), priority: fd.get('priority') === 'on', reportedBy: user.name, status: 'pending'\}, ...incidents]);\
+              setShowForm(false);\
+            \}\} className="bg-white p-6 rounded-xl border border-slate-200 space-y-4">\
+              <input name="title" required className="w-full px-4 py-2 border rounded-lg" placeholder="Problema" />\
+              <textarea name="desc" className="w-full px-4 py-2 border rounded-lg" placeholder="Detalles" />\
+              <label className="flex gap-2"><input type="checkbox" name="priority"/> Urgente</label>\
+              <button className="bg-rose-600 text-white px-6 py-2 rounded-lg">Enviar</button>\
+            </form>\
+          )\}\
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">\
+            \{incidents.map(i => (\
+              <div key=\{i.id\} className=\{`bg-white rounded-xl border p-4 flex flex-col $\{i.status === 'resolved' ? 'opacity-70' : i.priority ? 'border-rose-300' : ''\}`\}>\
+                <h3 className=\{`font-bold $\{i.status === 'resolved' ? 'line-through' : ''\}`\}>\{i.title\}</h3>\
+                <p className="text-xs text-slate-500 my-2">Por \{i.reportedBy\}</p>\
+                <p className="text-sm flex-grow mb-4">\{i.description\}</p>\
+                \{i.status === 'resolved' ? <div className="text-emerald-700 text-xs font-bold text-center bg-emerald-100 p-2 rounded">RESUELTO</div> : user.role === 'chef' ? <button onClick=\{() => setIncidents(prev => prev.map(inc => inc.id === i.id ? \{...inc, status:'resolved'\} : inc))\} className="bg-slate-800 text-white p-2 rounded text-sm text-center">Marcar Resuelta</button> : <div className="text-amber-700 text-xs font-bold text-center bg-amber-50 p-2 border border-amber-200 rounded">PENDIENTE</div>\}\
+              </div>\
+            ))\}\
+          </div>\
+        </div>\
+      );\
+    \}\
+\
+    // --- MONTAJE DE LA APLICACI\'d3N ---\
+    const root = ReactDOM.createRoot(document.getElementById('root'));\
+    root.render(<App />);\
+  </script>\
+</body>\
+</html>}
